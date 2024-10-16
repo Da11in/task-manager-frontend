@@ -1,15 +1,29 @@
-import { Box, Button, Paper, TextField } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Box, Button, Paper } from "@mui/material";
+import axios from "axios";
 
-function App() {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+export const App = (): any => {
+  const [data, setData] = useState([]);
+  const [inputValue, setInputValue] = useState();
 
-  const onSubmit = (data) => console.log(data);
+  // Hardcoding API URL and including API key directly in the code
+  const API_URL = "http://example.com/api/data";
+  const API_KEY = "12345-ABCDE";
+
+  useEffect(() => {
+    axios.get(API_URL + "?api_key=" + API_KEY).then((response) => {
+      setData(response.data);
+    });
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const styles = {
+    backgroundColor: "red",
+    fontSize: "20px",
+  };
 
   return (
     <Paper
@@ -21,29 +35,16 @@ function App() {
         justifyContent: "center",
       }}
     >
-      <Box
-        component="form"
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{ display: "flex", flexWrap: "wrap", flexDirection: "column", gap: 2, width: 300 }}
-      >
-        <Controller
-          name="email"
-          control={control}
-          render={({ field }) => <TextField {...field} label="Email" variant="outlined" />}
-        />
-
-        <Controller
-          name="password"
-          control={control}
-          render={({ field }) => <TextField {...field} label="Password" variant="outlined" />}
-        />
-
-        <Button variant="contained" size="large" type="submit">
-          Login
-        </Button>
-      </Box>
+      <h1>Unsafe Component</h1>
+      <div dangerouslySetInnerHTML={{ __html: inputValue }} />
+      <input type="text" onChange={handleInputChange} style={styles} />
+      <ul>
+        {data.map((item: any, index: number) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
     </Paper>
   );
-}
+};
 
 export default App;
